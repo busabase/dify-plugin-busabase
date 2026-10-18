@@ -12,20 +12,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
-        with:
-          python-version: "3.12"
+
+      # A uv-managed Python, not the runner's system one: Ubuntu's system
+      # site-packages ship an old-style `zope` package that shadows the
+      # `zope.event` gevent (a dify_plugin dependency) needs.
+      - name: Install
+        run: |
+          uv venv --python 3.12 --managed-python .venv
+          uv pip install --python .venv/bin/python -r requirements.txt pytest
 
       - name: Unit tests
-        run: uv run --no-project --with-requirements requirements.txt --with pytest python -m pytest -q
+        run: .venv/bin/python -m pytest -q
 
       - name: Package .difypkg
         run: |
           VERSION=$(grep "^version:" manifest.yaml | cut -d' ' -f2)
-          curl -sSL -o dify https://github.com/langgenius/dify-plugin-daemon/releases/download/0.6.11/dify-plugin-linux-amd64
-          chmod +x dify
-          ./dify plugin package . -o "busabase-$VERSION.difypkg"
+          # Outside the checkout, so the CLI binary is never packaged.
+          curl -sSL -o "$RUNNER_TEMP/dify" https://github.com/langgenius/dify-plugin-daemon/releases/download/0.6.11/dify-plugin-linux-amd64
+          chmod +x "$RUNNER_TEMP/dify"
+          "$RUNNER_TEMP/dify" plugin package . -o "$RUNNER_TEMP/busabase-$VERSION.difypkg"
+          unzip -l "$RUNNER_TEMP/busabase-$VERSION.difypkg"
 
       - uses: actions/upload-artifact@v4
         with:
           name: difypkg
-          path: "*.difypkg"
+          path: ${{ runner.temp }}/*.difypkg
