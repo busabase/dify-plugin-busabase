@@ -1,0 +1,59 @@
+identity:
+  name: create_record
+  author: busabase
+  label:
+    en_US: Create Record
+    zh_Hans: 新建记录
+description:
+  human:
+    en_US: Add a record to a Base as a Change Request. It merges immediately if your API key has write access; otherwise it waits for a human reviewer in Busabase.
+    zh_Hans: 以变更请求的方式向数据表新增一条记录。API 密钥有写权限时立即合并；否则进入 Busabase 审核，由人审批后生效。
+  llm: Create a new record in a Busabase Base. The write is a Change Request — the result `status` is "merged" (the record exists now, `recordId` is set) or "in_review" (a human must approve it first; tell the user it is waiting for review). Field values are keyed by field slug (see list_bases); the Base's first field is the record's title, so give it a short human-readable value. Check for duplicates with find_records first when a natural key (email, URL, name) exists.
+parameters:
+  - name: base
+    type: string
+    required: true
+    label:
+      en_US: Base
+      zh_Hans: 数据表
+    human_description:
+      en_US: The Base's id, slug, or name.
+      zh_Hans: 数据表的 ID、slug 或名称。
+    llm_description: The Base to add the record to — its id, slug, or exact name (from list_bases).
+    form: llm
+  - name: fields
+    type: string
+    required: true
+    label:
+      en_US: Fields (JSON)
+      zh_Hans: 字段值（JSON）
+    human_description:
+      en_US: 'A JSON object keyed by field slug, e.g. {"name": "Acme Corp", "score": 8}.'
+      zh_Hans: '以字段 slug 为键的 JSON 对象，例如 {"name": "Acme Corp", "score": 8}。'
+    llm_description: 'A JSON object of field values keyed by field slug, e.g. {"name": "Acme Corp", "stage": "Qualified", "score": 8}. Numbers as numbers, checkboxes as true/false, dates as ISO 8601 strings, select fields as the choice name.'
+    form: llm
+  - name: message
+    type: string
+    required: false
+    label:
+      en_US: Commit Message
+      zh_Hans: 提交说明
+    human_description:
+      en_US: Why this record is being added — shown to reviewers and in the record's history.
+      zh_Hans: 为什么新增这条记录，会显示给审核人并记入记录历史。
+    llm_description: 'A one-line, human-readable explanation for the reviewer: imperative verb + what + why, e.g. "Add Acme Corp — qualified lead from the June webinar". Always provide one.'
+    form: llm
+  - name: idempotency_key
+    type: string
+    required: false
+    label:
+      en_US: Idempotency Key
+      zh_Hans: 幂等键
+    human_description:
+      en_US: Optional. Reusing the same key on a retry returns the first Change Request instead of creating a duplicate.
+      zh_Hans: 可选。重试时使用相同的键，会返回第一次创建的变更请求，而不会重复创建。
+    llm_description: Optional. Only set it when retrying a call that may already have succeeded; reuse the same key on every retry.
+    form: form
+extra:
+  python:
+    source: tools/create_record.py

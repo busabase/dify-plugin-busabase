@@ -1,0 +1,87 @@
+identity:
+  name: search_playbooks
+  author: busabase
+  label:
+    en_US: Search Playbooks
+    zh_Hans: 搜索工作手册
+description:
+  human:
+    en_US: Find the company's skills and custom prompts (playbooks) for a job, so the agent follows your procedures instead of improvising.
+    zh_Hans: 查找公司为某项工作准备的技能和自定义提示词（工作手册），让智能体按你们的流程办事，而不是自由发挥。
+  llm: 'Call this FIRST for every new task: it finds the company''s own playbooks — skills (SKILL.md procedures) and custom prompts saved on nodes — that describe how this company does the job. Pass 2–5 phrasings of the task, in the user''s language AND in English, e.g. ["记录客户拜访", "log customer visit", "visit"]. If an item fits, open it with get_playbook, follow it, and name it in your reply. If nothing fits, do the work yourself. The user''s explicit words override a playbook.'
+parameters:
+  - name: queries
+    type: string
+    required: false
+    label:
+      en_US: Phrasings
+      zh_Hans: 任务描述
+    human_description:
+      en_US: 'A few ways to say the task, one per line or as a JSON array. Empty lists every playbook.'
+      zh_Hans: 用几种说法描述任务，每行一个或 JSON 数组。留空则列出全部工作手册。
+    llm_description: '2–5 short phrasings of the task as a JSON array of strings, e.g. ["写周报", "weekly report", "report"]. Each is matched as a case-insensitive substring of playbook names, descriptions and prompt text. Empty = browse every playbook.'
+    form: llm
+  - name: kind
+    type: select
+    required: false
+    default: all
+    options:
+      - value: all
+        label:
+          en_US: Skills and prompts
+          zh_Hans: 技能和提示词
+      - value: skill
+        label:
+          en_US: Skills only
+          zh_Hans: 仅技能
+      - value: prompt
+        label:
+          en_US: Prompts only
+          zh_Hans: 仅提示词
+    label:
+      en_US: Kind
+      zh_Hans: 类型
+    human_description:
+      en_US: Search skills, custom prompts, or both.
+      zh_Hans: 搜索技能、自定义提示词，或两者都搜。
+    llm_description: all (default), skill, or prompt.
+    form: llm
+  - name: near_node
+    type: string
+    required: false
+    label:
+      en_US: Current Node
+      zh_Hans: 当前节点
+    human_description:
+      en_US: Optional. The node the user is working on; playbooks on it and its folders rank first.
+      zh_Hans: 可选。用户正在处理的节点；该节点及其所在文件夹上的工作手册会排在前面。
+    llm_description: Optional. The id, slug or name of the node the task is about; playbooks on it and its folders rank first.
+    form: llm
+  - name: locale
+    type: string
+    required: false
+    label:
+      en_US: Language
+      zh_Hans: 语言
+    human_description:
+      en_US: Optional locale for prompt labels, e.g. en or zh-CN.
+      zh_Hans: 可选，提示词标签使用的语言，例如 en 或 zh-CN。
+    llm_description: Optional. The user's locale, e.g. "en" or "zh-CN".
+    form: llm
+  - name: limit
+    type: number
+    required: false
+    default: 10
+    min: 1
+    max: 50
+    label:
+      en_US: Limit
+      zh_Hans: 数量
+    human_description:
+      en_US: Maximum results (1–50).
+      zh_Hans: 最多返回多少条（1–50）。
+    llm_description: Maximum number of playbooks to return. Defaults to 10.
+    form: llm
+extra:
+  python:
+    source: tools/search_playbooks.py

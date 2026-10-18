@@ -1,0 +1,96 @@
+identity:
+  name: search_workspace
+  author: busabase
+  label:
+    en_US: Search Workspace
+    zh_Hans: 搜索工作区
+description:
+  human:
+    en_US: Find every occurrence of a word, phrase or regular expression across Base records, docs, Drive files and prompts in the space.
+    zh_Hans: 在空间内的数据表记录、文档、云盘文件和提示词中查找某个词、短语或正则表达式的所有出现位置。
+  llm: Search the whole Busabase workspace for a text pattern (literal or regular expression) and get every match with its location — record id + field for Base records, path for files, node name for docs. Use it for substring / keyword lookups; for an exact field-value lookup in one Base use find_records.
+parameters:
+  - name: pattern
+    type: string
+    required: true
+    label:
+      en_US: Pattern
+      zh_Hans: 搜索内容
+    human_description:
+      en_US: Text or regular expression to search for.
+      zh_Hans: 要搜索的文本或正则表达式。
+    llm_description: The text or regular expression to look for, e.g. "Acme" or "invoice\s+#\d+".
+    form: llm
+  - name: source
+    type: select
+    required: false
+    default: all
+    options:
+      - value: all
+        label:
+          en_US: Everything
+          zh_Hans: 全部
+      - value: records
+        label:
+          en_US: Base records
+          zh_Hans: 数据表记录
+      - value: nodes
+        label:
+          en_US: Docs and pages
+          zh_Hans: 文档和页面
+      - value: files
+        label:
+          en_US: Drive and skill files
+          zh_Hans: 云盘和技能文件
+      - value: prompts
+        label:
+          en_US: Agent prompts
+          zh_Hans: 智能体提示词
+    label:
+      en_US: Search In
+      zh_Hans: 搜索范围
+    human_description:
+      en_US: Limit the search to one kind of content.
+      zh_Hans: 只在某一类内容中搜索。
+    llm_description: "Where to search: all (default), records, nodes (docs/pages), files, or prompts."
+    form: llm
+  - name: base
+    type: string
+    required: false
+    label:
+      en_US: Base
+      zh_Hans: 数据表
+    human_description:
+      en_US: Optional. Only search records of this Base (id, slug, or name).
+      zh_Hans: 可选。只搜索这个数据表的记录（ID、slug 或名称）。
+    llm_description: Optional. Restrict the search to the records of one Base (id, slug, or name).
+    form: llm
+  - name: case_insensitive
+    type: boolean
+    required: false
+    default: false
+    label:
+      en_US: Ignore Case
+      zh_Hans: 忽略大小写
+    human_description:
+      en_US: Match regardless of upper/lower case.
+      zh_Hans: 匹配时不区分大小写。
+    llm_description: Set true to ignore upper/lower case.
+    form: llm
+  - name: max_matches
+    type: number
+    required: false
+    default: 50
+    min: 1
+    max: 1000
+    label:
+      en_US: Max Matches
+      zh_Hans: 最多结果数
+    human_description:
+      en_US: Maximum matches to return (1–1000).
+      zh_Hans: 最多返回多少条匹配（1–1000）。
+    llm_description: Maximum number of matches to return. Defaults to 50.
+    form: llm
+extra:
+  python:
+    source: tools/search_workspace.py

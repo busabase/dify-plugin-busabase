@@ -1,0 +1,62 @@
+identity:
+  name: find_records
+  author: busabase
+  label:
+    en_US: Find Records by Field Value
+    zh_Hans: 按字段值查找记录
+description:
+  human:
+    en_US: Find the records in a Base whose field exactly equals a value — e.g. look up a contact by email before creating a duplicate.
+    zh_Hans: 查找某个字段值完全等于给定值的记录，例如在新建前先按邮箱查重。
+  llm: Find records in one Busabase Base where a field EXACTLY equals a value (case-sensitive, whole value — not substring). Use it to check whether a record already exists before creating one, e.g. field "email", value "jane@acme.com". For partial or full-text matching use search_workspace instead.
+parameters:
+  - name: base
+    type: string
+    required: true
+    label:
+      en_US: Base
+      zh_Hans: 数据表
+    human_description:
+      en_US: The Base's id, slug, or name.
+      zh_Hans: 数据表的 ID、slug 或名称。
+    llm_description: The Base to search — its id, slug, or exact name (from list_bases).
+    form: llm
+  - name: field
+    type: string
+    required: true
+    label:
+      en_US: Field
+      zh_Hans: 字段
+    human_description:
+      en_US: The field's slug or display name.
+      zh_Hans: 字段的 slug 或显示名称。
+    llm_description: The field to compare — its slug (preferred) or display name, as listed by list_bases.
+    form: llm
+  - name: value
+    type: string
+    required: true
+    label:
+      en_US: Value
+      zh_Hans: 值
+    human_description:
+      en_US: The exact value to match.
+      zh_Hans: 要精确匹配的值。
+    llm_description: The exact text the field must equal.
+    form: llm
+  - name: limit
+    type: number
+    required: false
+    default: 20
+    min: 1
+    max: 100
+    label:
+      en_US: Limit
+      zh_Hans: 数量
+    human_description:
+      en_US: Maximum matches to return (1–100).
+      zh_Hans: 最多返回多少条（1–100）。
+    llm_description: Maximum number of matching records to return, 1 to 100. Defaults to 20.
+    form: llm
+extra:
+  python:
+    source: tools/find_records.py

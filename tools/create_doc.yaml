@@ -1,0 +1,70 @@
+identity:
+  name: create_doc
+  author: busabase
+  label:
+    en_US: Create Doc
+    zh_Hans: 新建文档
+description:
+  human:
+    en_US: Create a markdown doc in a folder (or at the workspace root). It is created right away if your API key has write access; otherwise it waits for a human reviewer.
+    zh_Hans: 在某个文件夹（或工作区根目录）中新建一篇 Markdown 文档。API 密钥有写权限时立即创建；否则进入审核，由人审批后生效。
+  llm: 'Create a new markdown doc in Busabase. Give a `name` (title) and the markdown `body`; put it in a folder with `parent` (id, slug or name), or leave parent empty for the workspace root. The slug is derived from the name when empty. The write is a Change Request — the result `status` is "merged" (the doc exists now, `nodeId` is set) or "in_review" (a human must approve it first; tell the user it is waiting for review). To change an existing doc use update_doc instead.'
+parameters:
+  - name: name
+    type: string
+    required: true
+    label:
+      en_US: Title
+      zh_Hans: 标题
+    human_description:
+      en_US: The doc's title.
+      zh_Hans: 文档标题。
+    llm_description: The doc's title, e.g. "Q3 launch plan".
+    form: llm
+  - name: body
+    type: string
+    required: false
+    label:
+      en_US: Body (Markdown)
+      zh_Hans: 正文（Markdown）
+    human_description:
+      en_US: The doc's content, in markdown.
+      zh_Hans: 文档内容，Markdown 格式。
+    llm_description: The full markdown content of the doc.
+    form: llm
+  - name: parent
+    type: string
+    required: false
+    label:
+      en_US: Folder
+      zh_Hans: 所在文件夹
+    human_description:
+      en_US: Optional. The folder to create it in (id, slug, or name). Empty means the workspace root.
+      zh_Hans: 可选。放在哪个文件夹里（ID、slug 或名称）。留空表示工作区根目录。
+    llm_description: Optional. The folder to create the doc in — its id, slug, or exact name (see list_nodes with type folder). Leave empty for the workspace root.
+    form: llm
+  - name: slug
+    type: string
+    required: false
+    label:
+      en_US: Slug
+      zh_Hans: Slug
+    human_description:
+      en_US: Optional URL name (lowercase letters, digits, hyphens). Derived from the title when empty.
+      zh_Hans: 可选的 URL 名称（小写字母、数字和连字符）。留空则根据标题生成。
+    llm_description: Optional. Lowercase letters, digits and hyphens only, unique among docs. Leave empty to derive it from the name.
+    form: llm
+  - name: description
+    type: string
+    required: false
+    label:
+      en_US: Description
+      zh_Hans: 简介
+    human_description:
+      en_US: Optional one-line description.
+      zh_Hans: 可选的一句话简介。
+    llm_description: Optional one-line summary of what the doc is for.
+    form: llm
+extra:
+  python:
+    source: tools/create_doc.py

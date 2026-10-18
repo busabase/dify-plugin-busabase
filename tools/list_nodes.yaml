@@ -1,0 +1,115 @@
+identity:
+  name: list_nodes
+  author: busabase
+  label:
+    en_US: List Nodes
+    zh_Hans: 列出节点
+description:
+  human:
+    en_US: Browse the workspace tree — folders, docs, Bases, skills, drives, AirApps and more — or list every node of one type.
+    zh_Hans: 浏览工作区的节点树（文件夹、文档、数据表、技能、云盘、AirApp 等），或列出某一类型的全部节点。
+  llm: 'List nodes in the Busabase workspace. A workspace is a tree of nodes: folder, doc, base (table), skill (company playbook), drive, airapp, file, form, html, whiteboard, workflow. With no arguments it returns the top two levels of the tree. Set `type` to list every node of that type (e.g. all docs, all skills), and/or `parent` to look inside one folder. Each node has id, type, slug, name and parentId; pass the id or slug to get_node to open one. For a name lookup use search_nodes instead.'
+parameters:
+  - name: type
+    type: select
+    required: false
+    default: all
+    options:
+      - value: all
+        label:
+          en_US: All types
+          zh_Hans: 全部类型
+      - value: folder
+        label:
+          en_US: Folder
+          zh_Hans: 文件夹
+      - value: doc
+        label:
+          en_US: Doc
+          zh_Hans: 文档
+      - value: base
+        label:
+          en_US: Base (table)
+          zh_Hans: 数据表
+      - value: skill
+        label:
+          en_US: Skill
+          zh_Hans: 技能
+      - value: drive
+        label:
+          en_US: Drive
+          zh_Hans: 云盘
+      - value: airapp
+        label:
+          en_US: AirApp
+          zh_Hans: AirApp 应用
+      - value: file
+        label:
+          en_US: File
+          zh_Hans: 文件
+      - value: form
+        label:
+          en_US: Form
+          zh_Hans: 表单
+      - value: html
+        label:
+          en_US: HTML page
+          zh_Hans: HTML 页面
+      - value: whiteboard
+        label:
+          en_US: Whiteboard
+          zh_Hans: 白板
+      - value: workflow
+        label:
+          en_US: Workflow
+          zh_Hans: 工作流
+    label:
+      en_US: Node Type
+      zh_Hans: 节点类型
+    human_description:
+      en_US: Only list nodes of this type.
+      zh_Hans: 只列出这种类型的节点。
+    llm_description: 'Only list nodes of this type: folder, doc, base, skill, drive, airapp, file, form, html, whiteboard or workflow. Default all.'
+    form: llm
+  - name: parent
+    type: string
+    required: false
+    label:
+      en_US: Parent Folder
+      zh_Hans: 上级文件夹
+    human_description:
+      en_US: Optional. Only list what is inside this folder (id, slug, or name).
+      zh_Hans: 可选。只列出这个文件夹里的内容（ID、slug 或名称）。
+    llm_description: Optional. A folder's id, slug, or exact name — only nodes inside it are listed. Leave empty for the whole workspace.
+    form: llm
+  - name: depth
+    type: number
+    required: false
+    default: 2
+    min: 1
+    max: 5
+    label:
+      en_US: Depth
+      zh_Hans: 层级深度
+    human_description:
+      en_US: How many folder levels to include (1–5) when listing the tree.
+      zh_Hans: 列出节点树时包含几层文件夹（1–5）。
+    llm_description: How many levels of the tree to include, 1 to 5 (default 2). Ignored when type is set. Folders with deeper content are flagged hasMoreChildren.
+    form: llm
+  - name: limit
+    type: number
+    required: false
+    default: 200
+    min: 1
+    max: 500
+    label:
+      en_US: Limit
+      zh_Hans: 数量上限
+    human_description:
+      en_US: Maximum nodes to return (1–500).
+      zh_Hans: 最多返回多少个节点（1–500）。
+    llm_description: Maximum number of nodes to return, 1 to 500. Defaults to 200.
+    form: llm
+extra:
+  python:
+    source: tools/list_nodes.py

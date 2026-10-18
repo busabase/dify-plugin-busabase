@@ -1,0 +1,69 @@
+identity:
+  name: update_doc
+  author: busabase
+  label:
+    en_US: Update Doc
+    zh_Hans: 更新文档
+description:
+  human:
+    en_US: Append to a doc or replace its whole body, as a Change Request. It merges right away if your API key has write access; otherwise it waits for a human reviewer. Every version is kept in the doc's history.
+    zh_Hans: 以变更请求的方式在文档末尾追加内容，或替换整篇正文。API 密钥有写权限时立即合并；否则进入审核。每个版本都会保留在文档历史中。
+  llm: 'Change an existing Busabase doc. mode "append" (default) adds `text` to the end of the current body; mode "replace" makes `text` the entire new body — read the doc with get_node first and send the complete edited markdown. The write is a Change Request — the result `status` is "merged" (applied now), "in_review" (a human must approve it first; tell the user), or "unchanged" (the doc already had that content).'
+parameters:
+  - name: doc
+    type: string
+    required: true
+    label:
+      en_US: Doc
+      zh_Hans: 文档
+    human_description:
+      en_US: The doc's id, slug, or name.
+      zh_Hans: 文档的 ID、slug 或名称。
+    llm_description: The doc to change — its id, slug, or exact name.
+    form: llm
+  - name: text
+    type: string
+    required: true
+    label:
+      en_US: Text (Markdown)
+      zh_Hans: 内容（Markdown）
+    human_description:
+      en_US: The markdown to append, or the full new body when replacing.
+      zh_Hans: 要追加的 Markdown，或替换时的完整新正文。
+    llm_description: For append, the markdown to add at the end (start it with a blank line or a heading to make a new section). For replace, the complete new body.
+    form: llm
+  - name: mode
+    type: select
+    required: false
+    default: append
+    options:
+      - value: append
+        label:
+          en_US: Append to the end
+          zh_Hans: 追加到末尾
+      - value: replace
+        label:
+          en_US: Replace the whole body
+          zh_Hans: 替换整篇正文
+    label:
+      en_US: Mode
+      zh_Hans: 方式
+    human_description:
+      en_US: Append to the doc, or replace its whole body.
+      zh_Hans: 追加到文档末尾，或替换整篇正文。
+    llm_description: '"append" (default) adds text to the end; "replace" overwrites the entire body with text.'
+    form: llm
+  - name: message
+    type: string
+    required: false
+    label:
+      en_US: Commit Message
+      zh_Hans: 提交说明
+    human_description:
+      en_US: Why the doc is being changed — shown to reviewers and in the doc's history.
+      zh_Hans: 为什么修改这篇文档，会显示给审核人并记入文档历史。
+    llm_description: 'A one-line explanation for the reviewer: imperative verb + what + why, e.g. "Add rollback steps to the deploy runbook". Always provide one.'
+    form: llm
+extra:
+  python:
+    source: tools/update_doc.py

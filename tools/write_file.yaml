@@ -1,0 +1,84 @@
+identity:
+  name: write_file
+  author: busabase
+  label:
+    en_US: Write File
+    zh_Hans: 写入文件
+description:
+  human:
+    en_US: Create or overwrite a file in a skill, drive or AirApp, as a Change Request. It merges right away if your API key has write access; otherwise it waits for a human reviewer.
+    zh_Hans: 以变更请求的方式在技能、云盘或 AirApp 中新建或覆盖一个文件。API 密钥有写权限时立即合并；否则进入审核，由人审批后生效。
+  llm: 'Write the full content of one file inside a Busabase skill, drive or airapp node. The file is created if it does not exist and replaced if it does (mode "auto"); use mode "update" to fail instead of creating a new file when the path might be mistyped. To edit, read_file first and send the complete new text. If someone else changed the file meanwhile the write fails — read it again and redo the edit. The result `status` is "merged", "in_review" (tell the user it waits for review) or "unchanged".'
+parameters:
+  - name: node
+    type: string
+    required: true
+    label:
+      en_US: Skill / Drive / AirApp
+      zh_Hans: 技能 / 云盘 / AirApp
+    human_description:
+      en_US: The node's id, slug, or name.
+      zh_Hans: 节点的 ID、slug 或名称。
+    llm_description: The skill, drive or airapp node — its id, slug, or exact name.
+    form: llm
+  - name: path
+    type: string
+    required: true
+    label:
+      en_US: File Path
+      zh_Hans: 文件路径
+    human_description:
+      en_US: The file's path inside the node, e.g. notes/plan.md.
+      zh_Hans: 文件在节点内的路径，例如 notes/plan.md。
+    llm_description: The file's path inside the node, e.g. "SKILL.md" or "notes/plan.md". Folders are created implicitly.
+    form: llm
+  - name: content
+    type: string
+    required: true
+    label:
+      en_US: Content
+      zh_Hans: 内容
+    human_description:
+      en_US: The file's complete new text.
+      zh_Hans: 文件的完整新内容。
+    llm_description: The complete new text of the file (not a diff).
+    form: llm
+  - name: mode
+    type: select
+    required: false
+    default: auto
+    options:
+      - value: auto
+        label:
+          en_US: Create or update
+          zh_Hans: 新建或更新
+      - value: create
+        label:
+          en_US: Create only
+          zh_Hans: 仅新建
+      - value: update
+        label:
+          en_US: Update only
+          zh_Hans: 仅更新
+    label:
+      en_US: Mode
+      zh_Hans: 方式
+    human_description:
+      en_US: Create or update (default), only create a new file, or only update an existing one.
+      zh_Hans: 新建或更新（默认）、只新建文件，或只更新已有文件。
+    llm_description: '"auto" (default) creates or replaces; "create" fails if the file exists; "update" fails if it does not.'
+    form: llm
+  - name: message
+    type: string
+    required: false
+    label:
+      en_US: Commit Message
+      zh_Hans: 提交说明
+    human_description:
+      en_US: Why the file is being changed — shown to reviewers.
+      zh_Hans: 为什么修改这个文件，会显示给审核人。
+    llm_description: 'A one-line explanation for the reviewer: imperative verb + what + why, e.g. "Add budget check to the lead qualification skill". Always provide one.'
+    form: llm
+extra:
+  python:
+    source: tools/write_file.py

@@ -1,0 +1,22 @@
+[project]
+name = "dify-plugin-busabase"
+version = "0.1.0"
+description = "Busabase tool plugin for Dify — Bases, records, docs, skills, files and playbooks; every write is a reviewed Change Request."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+# Keep in sync with requirements.txt — Dify installs from requirements.txt.
+dependencies = [
+    "dify_plugin>=0.10.2,<0.11.0",
+    "httpx>=0.28.1,<1.0",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3,<10"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = [
+    "integration: talks to a real Busabase server (set BUSABASE_TEST_BASE_URL)",
+]

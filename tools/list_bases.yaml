@@ -1,0 +1,15 @@
+identity:
+  name: list_bases
+  author: busabase
+  label:
+    en_US: List Bases
+    zh_Hans: 列出数据表
+description:
+  human:
+    en_US: List every Base (table) in the Busabase space, with each Base's fields.
+    zh_Hans: 列出 Busabase 空间里的所有数据表（Base）及其字段。
+  llm: List all Bases (tables) in the Busabase workspace. Returns each Base's id, slug, name, description and its fields (slug, display name, type, select choices). Call this first to learn which Base to use and the exact field slugs to read or write.
+parameters: []
+extra:
+  python:
+    source: tools/list_bases.py

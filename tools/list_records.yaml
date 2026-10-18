@@ -1,0 +1,72 @@
+identity:
+  name: list_records
+  author: busabase
+  label:
+    en_US: List Records
+    zh_Hans: 列出记录
+description:
+  human:
+    en_US: List one page of records from a Base, with a cursor for the next page.
+    zh_Hans: 从一个数据表中列出一页记录，并返回翻页游标。
+  llm: List records of one Busabase Base, one page at a time. Each record has an id and `fields` (values keyed by field slug). If `nextCursor` is returned there are more records — call again with it as `cursor`. For an exact lookup by a field value use find_records; for text search use search_workspace.
+parameters:
+  - name: base
+    type: string
+    required: true
+    label:
+      en_US: Base
+      zh_Hans: 数据表
+    human_description:
+      en_US: The Base's id, slug, or name.
+      zh_Hans: 数据表的 ID、slug 或名称。
+    llm_description: The Base to read — its id, slug, or exact name (from list_bases).
+    form: llm
+  - name: limit
+    type: number
+    required: false
+    default: 20
+    min: 1
+    max: 100
+    label:
+      en_US: Limit
+      zh_Hans: 数量
+    human_description:
+      en_US: Records per page (1–100).
+      zh_Hans: 每页记录数（1–100）。
+    llm_description: How many records to return in this page, 1 to 100. Defaults to 20.
+    form: llm
+  - name: cursor
+    type: string
+    required: false
+    label:
+      en_US: Cursor
+      zh_Hans: 翻页游标
+    human_description:
+      en_US: The nextCursor from a previous call, to fetch the next page.
+      zh_Hans: 上一次调用返回的 nextCursor，用来获取下一页。
+    llm_description: Leave empty for the first page. To get the next page pass the `nextCursor` value from the previous response unchanged.
+    form: llm
+  - name: status
+    type: select
+    required: false
+    default: active
+    options:
+      - value: active
+        label:
+          en_US: Active
+          zh_Hans: 正常
+      - value: archived
+        label:
+          en_US: Archived (trash)
+          zh_Hans: 已归档（回收站）
+    label:
+      en_US: Status
+      zh_Hans: 状态
+    human_description:
+      en_US: Active records, or the Base's archived ones.
+      zh_Hans: 列出正常记录，或已归档的记录。
+    llm_description: "`active` (default) for live records, `archived` for the Base's trash."
+    form: llm
+extra:
+  python:
+    source: tools/list_records.py

@@ -1,0 +1,76 @@
+identity:
+  author: busabase
+  name: busabase
+  label:
+    en_US: Busabase
+    zh_Hans: Busabase
+  description:
+    en_US: Work with a Busabase workspace from Dify — Base records, docs, folders, skills, drives and their files, and the company's playbooks. Every write is a reviewed, versioned Change Request.
+    zh_Hans: 在 Dify 中使用 Busabase 工作区：数据表记录、文档、文件夹、技能、云盘及其中的文件，以及公司的工作手册。每次写入都是经过审核、带版本历史的变更请求。
+  icon: icon.svg
+  icon_dark: icon-dark.svg
+  tags:
+    - productivity
+    - business
+credentials_for_provider:
+  base_url:
+    type: text-input
+    required: true
+    default: https://busabase.com
+    label:
+      en_US: Base URL
+      zh_Hans: 服务器地址
+    placeholder:
+      en_US: https://busabase.com
+      zh_Hans: https://busabase.com
+    help:
+      en_US: "Busabase Cloud: https://busabase.com. A self-hosted or local open-source server (`npx busabase server`) listens on http://localhost:15419. If Dify runs in Docker, start the server with --host 0.0.0.0 and use http://host.docker.internal:15419 (Docker Desktop) or the Docker gateway IP on Linux, e.g. http://172.17.0.1:15419. No trailing /api/v1."
+      zh_Hans: "Busabase Cloud 填 https://busabase.com。自托管或本地开源服务器（`npx busabase server`）默认是 http://localhost:15419。如果 Dify 跑在 Docker 里，请用 --host 0.0.0.0 启动服务器，并填 http://host.docker.internal:15419（Docker Desktop）或 Linux 上的 Docker 网关 IP，例如 http://172.17.0.1:15419。不要带 /api/v1。"
+  api_key:
+    type: secret-input
+    required: false
+    label:
+      en_US: API Key
+      zh_Hans: API 密钥
+    placeholder:
+      en_US: Your Busabase API key
+      zh_Hans: 你的 Busabase API 密钥
+    help:
+      en_US: Create one in Busabase under Settings → API Keys. Writes merge immediately only if the key has write access; otherwise they wait in the review inbox. Leave empty for a local open-source server without auth.
+      zh_Hans: 在 Busabase 的「设置 → API 密钥」里创建。只有密钥拥有写权限时写入才会立即合并，否则会进入审核收件箱等人审批。本地未开启鉴权的开源服务器可以留空。
+    url: https://busabase.com/docs
+  space_id:
+    type: text-input
+    required: false
+    label:
+      en_US: Space ID
+      zh_Hans: 空间 ID
+    placeholder:
+      en_US: Optional — leave empty for the key's own space
+      zh_Hans: 可选，留空则使用密钥所属空间
+    help:
+      en_US: Only for Busabase Cloud accounts with more than one space. Sent as the x-busabase-space header; leave empty to use the API key's own space.
+      zh_Hans: 仅当你的 Busabase Cloud 账号有多个空间时需要填写，会作为 x-busabase-space 请求头发送；留空则使用 API 密钥所属的空间。
+tools:
+  - tools/list_bases.yaml
+  - tools/list_records.yaml
+  - tools/find_records.yaml
+  - tools/get_record.yaml
+  - tools/create_record.yaml
+  - tools/update_record.yaml
+  - tools/list_nodes.yaml
+  - tools/search_nodes.yaml
+  - tools/get_node.yaml
+  - tools/read_node_lines.yaml
+  - tools/create_folder.yaml
+  - tools/create_doc.yaml
+  - tools/update_doc.yaml
+  - tools/list_files.yaml
+  - tools/read_file.yaml
+  - tools/write_file.yaml
+  - tools/search_playbooks.yaml
+  - tools/get_playbook.yaml
+  - tools/search_workspace.yaml
+extra:
+  python:
+    source: provider/busabase.py

@@ -1,0 +1,59 @@
+identity:
+  name: get_record
+  author: busabase
+  label:
+    en_US: Get Record
+    zh_Hans: 获取记录
+description:
+  human:
+    en_US: Get one record, by its id or by an exact field value.
+    zh_Hans: 通过记录 ID 或某个字段的精确值获取一条记录。
+  llm: Get one Busabase record with all its field values. Either pass `record_id`, or pass `base` + `field` + `value` to select the record whose field exactly equals the value. Fails if no record matches.
+parameters:
+  - name: record_id
+    type: string
+    required: false
+    label:
+      en_US: Record ID
+      zh_Hans: 记录 ID
+    human_description:
+      en_US: The record's id. Leave empty to select by field value instead.
+      zh_Hans: 记录的 ID。留空则改为按字段值查找。
+    llm_description: The record id (starts with "rec"). If you do not have it, leave this empty and give base, field and value.
+    form: llm
+  - name: base
+    type: string
+    required: false
+    label:
+      en_US: Base
+      zh_Hans: 数据表
+    human_description:
+      en_US: When selecting by field value — the Base's id, slug, or name.
+      zh_Hans: 按字段值查找时使用：数据表的 ID、slug 或名称。
+    llm_description: Only when record_id is empty — the Base's id, slug, or exact name.
+    form: llm
+  - name: field
+    type: string
+    required: false
+    label:
+      en_US: Field
+      zh_Hans: 字段
+    human_description:
+      en_US: When selecting by field value — the field's slug or display name.
+      zh_Hans: 按字段值查找时使用：字段的 slug 或显示名称。
+    llm_description: Only when record_id is empty — the field to match, by slug or display name.
+    form: llm
+  - name: value
+    type: string
+    required: false
+    label:
+      en_US: Value
+      zh_Hans: 值
+    human_description:
+      en_US: When selecting by field value — the exact value.
+      zh_Hans: 按字段值查找时使用：要精确匹配的值。
+    llm_description: Only when record_id is empty — the exact value the field must equal.
+    form: llm
+extra:
+  python:
+    source: tools/get_record.py

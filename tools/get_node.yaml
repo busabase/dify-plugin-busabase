@@ -1,0 +1,101 @@
+identity:
+  name: get_node
+  author: busabase
+  label:
+    en_US: Get Node
+    zh_Hans: 获取节点
+description:
+  human:
+    en_US: Open one node — a doc's text, a folder's contents, a skill's or drive's file list, or a Base's fields.
+    zh_Hans: 打开一个节点：文档的正文、文件夹的内容、技能或云盘的文件列表，或数据表的字段。
+  llm: 'Open one Busabase node by id, slug, or exact name and get its details. doc: the markdown body (very long bodies are truncated — then use read_node_lines for the rest). folder: its children. skill / drive / airapp: the list of files (read one with read_file). base: its fields (read records with list_records). Pass `type` only if a slug is shared by two node types.'
+parameters:
+  - name: node
+    type: string
+    required: true
+    label:
+      en_US: Node
+      zh_Hans: 节点
+    human_description:
+      en_US: The node's id, slug, or name.
+      zh_Hans: 节点的 ID、slug 或名称。
+    llm_description: The node's id (starts with "nod"), its slug, or its exact name — from list_nodes or search_nodes.
+    form: llm
+  - name: type
+    type: select
+    required: false
+    default: any
+    options:
+      - value: any
+        label:
+          en_US: Any type
+          zh_Hans: 任意类型
+      - value: folder
+        label:
+          en_US: Folder
+          zh_Hans: 文件夹
+      - value: doc
+        label:
+          en_US: Doc
+          zh_Hans: 文档
+      - value: base
+        label:
+          en_US: Base (table)
+          zh_Hans: 数据表
+      - value: skill
+        label:
+          en_US: Skill
+          zh_Hans: 技能
+      - value: drive
+        label:
+          en_US: Drive
+          zh_Hans: 云盘
+      - value: airapp
+        label:
+          en_US: AirApp
+          zh_Hans: AirApp 应用
+      - value: file
+        label:
+          en_US: File
+          zh_Hans: 文件
+      - value: form
+        label:
+          en_US: Form
+          zh_Hans: 表单
+      - value: html
+        label:
+          en_US: HTML page
+          zh_Hans: HTML 页面
+      - value: whiteboard
+        label:
+          en_US: Whiteboard
+          zh_Hans: 白板
+      - value: workflow
+        label:
+          en_US: Workflow
+          zh_Hans: 工作流
+    label:
+      en_US: Node Type
+      zh_Hans: 节点类型
+    human_description:
+      en_US: Only needed when the same slug is used by two kinds of node.
+      zh_Hans: 只有当同一个 slug 被两种节点使用时才需要。
+    llm_description: Optional. Require this node type; also picks the right node when a slug is shared by two types. Default any.
+    form: llm
+  - name: max_chars
+    type: number
+    required: false
+    default: 12000
+    min: 500
+    max: 100000
+    label:
+      en_US: Max Characters
+      zh_Hans: 最大字符数
+    human_description:
+      en_US: Longer doc bodies are cut off at this length (500–100000).
+      zh_Hans: 文档正文超过这个长度会被截断（500–100000）。
+    llm_description: For a doc, the most characters of its body to return (default 12000). Read further with read_node_lines.
+    form: form
+extra:
+  python:
+    source: tools/get_node.py

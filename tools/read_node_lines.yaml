@@ -1,0 +1,62 @@
+identity:
+  name: read_node_lines
+  author: busabase
+  label:
+    en_US: Read Lines
+    zh_Hans: 按行读取
+description:
+  human:
+    en_US: Read an exact range of lines from a doc, an HTML page, or a file inside a skill, drive or AirApp.
+    zh_Hans: 读取文档、HTML 页面，或技能/云盘/AirApp 中某个文件的指定行范围。
+  llm: 'Read lines start_line..end_line (1-based, inclusive, at most 2000) of a Busabase doc, html, whiteboard or workflow node — or, with `path`, of a file inside a skill / drive / airapp node. Use it for long docs that get_node truncated, or to read around a search_workspace match (which reports a line number). The result says how many lines there are in total.'
+parameters:
+  - name: node
+    type: string
+    required: true
+    label:
+      en_US: Node
+      zh_Hans: 节点
+    human_description:
+      en_US: The doc (or skill / drive / AirApp) id, slug, or name.
+      zh_Hans: 文档（或技能/云盘/AirApp）的 ID、slug 或名称。
+    llm_description: The node's id, slug, or exact name.
+    form: llm
+  - name: start_line
+    type: number
+    required: false
+    default: 1
+    min: 1
+    label:
+      en_US: Start Line
+      zh_Hans: 起始行
+    human_description:
+      en_US: First line to read (1-based).
+      zh_Hans: 从第几行开始读（从 1 开始）。
+    llm_description: First line to read, 1-based and inclusive. Default 1.
+    form: llm
+  - name: end_line
+    type: number
+    required: false
+    min: 1
+    label:
+      en_US: End Line
+      zh_Hans: 结束行
+    human_description:
+      en_US: Last line to read (inclusive). Defaults to 200 lines after the start.
+      zh_Hans: 读到第几行（包含）。默认读起始行之后的 200 行。
+    llm_description: Last line to read, inclusive. Defaults to start_line + 199; at most 2000 lines per call.
+    form: llm
+  - name: path
+    type: string
+    required: false
+    label:
+      en_US: File Path
+      zh_Hans: 文件路径
+    human_description:
+      en_US: Only for a skill, drive or AirApp — the file inside it, e.g. SKILL.md.
+      zh_Hans: 仅用于技能、云盘或 AirApp：其中的文件路径，例如 SKILL.md。
+    llm_description: Only when the node is a skill, drive or airapp — the file's path inside it, e.g. "SKILL.md" or "notes/plan.md" (see list_files). Leave empty for docs.
+    form: llm
+extra:
+  python:
+    source: tools/read_node_lines.py

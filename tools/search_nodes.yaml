@@ -1,0 +1,101 @@
+identity:
+  name: search_nodes
+  author: busabase
+  label:
+    en_US: Search Nodes by Name
+    zh_Hans: 按名称搜索节点
+description:
+  human:
+    en_US: Quickly find docs, folders, Bases, skills and other nodes whose name or slug contains some text.
+    zh_Hans: 快速查找名称或 slug 包含某段文字的文档、文件夹、数据表、技能等节点。
+  llm: Find Busabase nodes (docs, folders, bases, skills, drives, airapps, …) whose NAME or SLUG contains the query (case-insensitive). It does not look inside content — use search_workspace for that. Returns id, type, slug and name; open a hit with get_node.
+parameters:
+  - name: query
+    type: string
+    required: true
+    label:
+      en_US: Query
+      zh_Hans: 关键词
+    human_description:
+      en_US: Part of the node's name or slug.
+      zh_Hans: 节点名称或 slug 的一部分。
+    llm_description: Text that appears in the node's name or slug, e.g. "onboarding" or "周报".
+    form: llm
+  - name: type
+    type: select
+    required: false
+    default: all
+    options:
+      - value: all
+        label:
+          en_US: All types
+          zh_Hans: 全部类型
+      - value: folder
+        label:
+          en_US: Folder
+          zh_Hans: 文件夹
+      - value: doc
+        label:
+          en_US: Doc
+          zh_Hans: 文档
+      - value: base
+        label:
+          en_US: Base (table)
+          zh_Hans: 数据表
+      - value: skill
+        label:
+          en_US: Skill
+          zh_Hans: 技能
+      - value: drive
+        label:
+          en_US: Drive
+          zh_Hans: 云盘
+      - value: airapp
+        label:
+          en_US: AirApp
+          zh_Hans: AirApp 应用
+      - value: file
+        label:
+          en_US: File
+          zh_Hans: 文件
+      - value: form
+        label:
+          en_US: Form
+          zh_Hans: 表单
+      - value: html
+        label:
+          en_US: HTML page
+          zh_Hans: HTML 页面
+      - value: whiteboard
+        label:
+          en_US: Whiteboard
+          zh_Hans: 白板
+      - value: workflow
+        label:
+          en_US: Workflow
+          zh_Hans: 工作流
+    label:
+      en_US: Node Type
+      zh_Hans: 节点类型
+    human_description:
+      en_US: Only return nodes of this type.
+      zh_Hans: 只返回这种类型的节点。
+    llm_description: Optional. Only return nodes of this type. Default all.
+    form: llm
+  - name: limit
+    type: number
+    required: false
+    default: 20
+    min: 1
+    max: 50
+    label:
+      en_US: Limit
+      zh_Hans: 数量
+    human_description:
+      en_US: Maximum results (1–50).
+      zh_Hans: 最多返回多少条（1–50）。
+    llm_description: Maximum number of nodes to return, 1 to 50. Defaults to 20.
+    form: llm
+extra:
+  python:
+    source: tools/search_nodes.py

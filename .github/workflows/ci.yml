@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-and-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+
+      - name: Unit tests
+        run: uv run --no-project --with-requirements requirements.txt --with pytest python -m pytest -q
+
+      - name: Package .difypkg
+        run: |
+          VERSION=$(grep "^version:" manifest.yaml | cut -d' ' -f2)
+          curl -sSL -o dify https://github.com/langgenius/dify-plugin-daemon/releases/download/0.6.11/dify-plugin-linux-amd64
+          chmod +x dify
+          ./dify plugin package . -o "busabase-$VERSION.difypkg"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: difypkg
+          path: "*.difypkg"

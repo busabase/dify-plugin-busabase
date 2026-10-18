@@ -1,0 +1,48 @@
+identity:
+  name: update_record
+  author: busabase
+  label:
+    en_US: Update Record
+    zh_Hans: 更新记录
+description:
+  human:
+    en_US: Change some fields of a record as a Change Request. It merges immediately if your API key has write access; otherwise it waits for a human reviewer. Every change is kept in the record's history.
+    zh_Hans: 以变更请求的方式修改记录的部分字段。API 密钥有写权限时立即合并；否则进入审核，由人审批后生效。每次修改都会保留在记录历史中。
+  llm: Update an existing Busabase record. Only the fields you pass change; others keep their values. The write is a Change Request — the result `status` is "merged" (applied now) or "in_review" (a human must approve it first; tell the user it is waiting for review). Field values are keyed by field slug.
+parameters:
+  - name: record_id
+    type: string
+    required: true
+    label:
+      en_US: Record ID
+      zh_Hans: 记录 ID
+    human_description:
+      en_US: The id of the record to update.
+      zh_Hans: 要更新的记录 ID。
+    llm_description: The id of the record to update (starts with "rec"); get it from list_records, find_records or get_record.
+    form: llm
+  - name: fields
+    type: string
+    required: true
+    label:
+      en_US: Fields (JSON)
+      zh_Hans: 字段值（JSON）
+    human_description:
+      en_US: 'The fields to change, as a JSON object keyed by field slug, e.g. {"stage": "Won"}.'
+      zh_Hans: '要修改的字段，以字段 slug 为键的 JSON 对象，例如 {"stage": "Won"}。'
+    llm_description: 'A JSON object with only the fields to change, keyed by field slug, e.g. {"stage": "Won", "score": 9}.'
+    form: llm
+  - name: message
+    type: string
+    required: false
+    label:
+      en_US: Commit Message
+      zh_Hans: 提交说明
+    human_description:
+      en_US: Why this record is being changed — shown to reviewers and in the record's history.
+      zh_Hans: 为什么修改这条记录，会显示给审核人并记入记录历史。
+    llm_description: 'A one-line, human-readable explanation for the reviewer: imperative verb + what + why, e.g. "Move Acme to Won — contract signed on July 8". Always provide one.'
+    form: llm
+extra:
+  python:
+    source: tools/update_record.py

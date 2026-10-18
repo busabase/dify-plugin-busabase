@@ -1,0 +1,70 @@
+identity:
+  name: create_folder
+  author: busabase
+  label:
+    en_US: Create Folder
+    zh_Hans: 新建文件夹
+description:
+  human:
+    en_US: Create a folder in the workspace tree, as a Change Request. It is created right away if your API key has write access; otherwise it waits for a human reviewer.
+    zh_Hans: 以变更请求的方式在工作区中新建文件夹。API 密钥有写权限时立即创建；否则进入审核，由人审批后生效。
+  llm: 'Create a folder in Busabase to organise docs, bases and other nodes. Put it inside another folder with `parent`, or leave parent empty for the workspace root. The write is a Change Request — the result `status` is "merged" (the folder exists now, `nodeId` is set; use it as `parent` for create_doc) or "in_review" (a human must approve it first).'
+parameters:
+  - name: name
+    type: string
+    required: true
+    label:
+      en_US: Name
+      zh_Hans: 名称
+    human_description:
+      en_US: The folder's name.
+      zh_Hans: 文件夹名称。
+    llm_description: The folder's name, e.g. "Customer research".
+    form: llm
+  - name: parent
+    type: string
+    required: false
+    label:
+      en_US: Parent Folder
+      zh_Hans: 上级文件夹
+    human_description:
+      en_US: Optional. The folder to create it in (id, slug, or name). Empty means the workspace root.
+      zh_Hans: 可选。放在哪个文件夹里（ID、slug 或名称）。留空表示工作区根目录。
+    llm_description: Optional. The parent folder's id, slug, or exact name. Leave empty for the workspace root.
+    form: llm
+  - name: slug
+    type: string
+    required: false
+    label:
+      en_US: Slug
+      zh_Hans: Slug
+    human_description:
+      en_US: Optional URL name (lowercase letters, digits, hyphens). Derived from the name when empty.
+      zh_Hans: 可选的 URL 名称（小写字母、数字和连字符）。留空则根据名称生成。
+    llm_description: Optional. Lowercase letters, digits and hyphens only, unique among folders. Leave empty to derive it from the name.
+    form: llm
+  - name: description
+    type: string
+    required: false
+    label:
+      en_US: Description
+      zh_Hans: 简介
+    human_description:
+      en_US: Optional one-line description.
+      zh_Hans: 可选的一句话简介。
+    llm_description: Optional one-line summary of what goes in the folder.
+    form: llm
+  - name: message
+    type: string
+    required: false
+    label:
+      en_US: Commit Message
+      zh_Hans: 提交说明
+    human_description:
+      en_US: Why this folder is being added — shown to reviewers.
+      zh_Hans: 为什么新建这个文件夹，会显示给审核人。
+    llm_description: 'A one-line explanation for the reviewer: imperative verb + what + why, e.g. "Create Customer research folder for interview notes".'
+    form: llm
+extra:
+  python:
+    source: tools/create_folder.py

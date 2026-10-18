@@ -1,0 +1,51 @@
+identity:
+  name: list_files
+  author: busabase
+  label:
+    en_US: List Files
+    zh_Hans: 列出文件
+description:
+  human:
+    en_US: List the files inside a skill, drive or AirApp node.
+    zh_Hans: 列出技能、云盘或 AirApp 节点里的文件。
+  llm: List the files inside a Busabase skill, drive or airapp node (path, size, mime type). Then read one with read_file or change one with write_file.
+parameters:
+  - name: node
+    type: string
+    required: true
+    label:
+      en_US: Skill / Drive / AirApp
+      zh_Hans: 技能 / 云盘 / AirApp
+    human_description:
+      en_US: The node's id, slug, or name.
+      zh_Hans: 节点的 ID、slug 或名称。
+    llm_description: The skill, drive or airapp node — its id, slug, or exact name (see list_nodes with that type).
+    form: llm
+  - name: prefix
+    type: string
+    required: false
+    label:
+      en_US: Folder Prefix
+      zh_Hans: 路径前缀
+    human_description:
+      en_US: Optional. Only list paths that start with this, e.g. references/.
+      zh_Hans: 可选。只列出以此开头的路径，例如 references/。
+    llm_description: Optional. Only list files whose path starts with this, e.g. "references/".
+    form: llm
+  - name: limit
+    type: number
+    required: false
+    default: 200
+    min: 1
+    max: 1000
+    label:
+      en_US: Limit
+      zh_Hans: 数量上限
+    human_description:
+      en_US: Maximum files to return (1–1000).
+      zh_Hans: 最多返回多少个文件（1–1000）。
+    llm_description: Maximum number of files to return. Defaults to 200.
+    form: llm
+extra:
+  python:
+    source: tools/list_files.py

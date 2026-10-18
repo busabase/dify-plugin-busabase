@@ -1,0 +1,14 @@
+# Not shipped in the .difypkg
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.env
+*.difypkg
+tests/
+GUIDE.md
+.git/
+.gitignore
+.github/
+.DS_Store

@@ -1,0 +1,51 @@
+identity:
+  name: read_file
+  author: busabase
+  label:
+    en_US: Read File
+    zh_Hans: 读取文件
+description:
+  human:
+    en_US: Read one file from a skill, drive or AirApp — for example a skill's SKILL.md.
+    zh_Hans: 读取技能、云盘或 AirApp 中的一个文件，例如技能的 SKILL.md。
+  llm: Read the text of one file inside a Busabase skill, drive or airapp node, by path (e.g. "SKILL.md", "references/checklist.md"). Binary files return a download URL instead of text. Very long files are truncated — read the rest with read_node_lines (node + path).
+parameters:
+  - name: node
+    type: string
+    required: true
+    label:
+      en_US: Skill / Drive / AirApp
+      zh_Hans: 技能 / 云盘 / AirApp
+    human_description:
+      en_US: The node's id, slug, or name.
+      zh_Hans: 节点的 ID、slug 或名称。
+    llm_description: The skill, drive or airapp node — its id, slug, or exact name.
+    form: llm
+  - name: path
+    type: string
+    required: true
+    label:
+      en_US: File Path
+      zh_Hans: 文件路径
+    human_description:
+      en_US: The file's path inside the node, e.g. SKILL.md.
+      zh_Hans: 文件在节点内的路径，例如 SKILL.md。
+    llm_description: The file's path inside the node, exactly as list_files shows it, e.g. "SKILL.md".
+    form: llm
+  - name: max_chars
+    type: number
+    required: false
+    default: 20000
+    min: 500
+    max: 200000
+    label:
+      en_US: Max Characters
+      zh_Hans: 最大字符数
+    human_description:
+      en_US: Longer files are cut off at this length.
+      zh_Hans: 文件超过这个长度会被截断。
+    llm_description: The most characters of the file to return (default 20000).
+    form: form
+extra:
+  python:
+    source: tools/read_file.py
