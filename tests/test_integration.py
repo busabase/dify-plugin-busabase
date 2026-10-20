@@ -19,7 +19,7 @@ from urllib.parse import urlparse
 
 import pytest
 
-from busabase_dify.client import BusabaseClient
+from busabase_dify.client import BusabaseClient, BusabaseError
 from tests.helpers import run_tool
 from tools.create_doc import CreateDocTool
 from tools.create_folder import CreateFolderTool
@@ -315,8 +315,14 @@ def test_node_tools_round_trip(credentials, stamp, scratch_skill):
 
 
 def test_server_quirks_the_node_tools_guard_against(credentials, stamp, scratch_skill):
-    """Raw API behaviour the guards exist for. If one of these starts failing, the
-    server fixed it and the matching workaround (see core.py) can be revisited."""
+    """Raw API behaviour the guards exist for, on old AND fixed servers.
+
+    Older Busabase servers answer these mistakes with success and do nothing (or
+    the wrong thing); newer ones resolve the reference or return a clear 4xx.
+    The plugin's guards must work against both, so each check accepts exactly
+    those two outcomes and fails on anything else. The printed summary says
+    which one this server gave.
+    """
     client = BusabaseClient.from_credentials(credentials)
     folder = client.node_change_request(
         [{"kind": "create", "nodeType": "folder", "slug": f"dify-it-quirks-{stamp}", "name": f"Dify IT Quirks {stamp}"}],
@@ -325,30 +331,57 @@ def test_server_quirks_the_node_tools_guard_against(credentials, stamp, scratch_
     folder_id = folder["primaryOperation"]["nodeId"]
     doc = client.create_doc(slug=f"dify-it-quirk-doc-{stamp}", name="Quirk Doc", body="original", parent_node_id=folder_id)
     doc_id = doc["node"]["id"]
+    observed: dict[str, str] = {}
 
-    # 1. nodes.list: a parentId slug is not an error — it returns nothing.
-    assert client.list_nodes(parent_id=f"dify-it-quirks-{stamp}", depth=1) == []
-    assert [n["id"] for n in client.list_nodes(parent_id=folder_id, depth=1)] == [doc_id]
-    # 2. nodes.list: with `types`, `parentId` is ignored (nodes outside the folder come back).
-    outside = client.list_nodes(parent_id=folder_id, types=["skill"])
-    assert scratch_skill["id"] in [n["id"] for n in outside]
-    # 3. docs.create: a slug already used in the SAME folder returns the existing doc, unchanged.
-    again = client.create_doc(slug=f"dify-it-quirk-doc-{stamp}", name="Other", body="new", parent_node_id=folder_id)
-    assert again.get("materialized") is True and again["node"]["id"] == doc_id and again["body"] == "original"
-    # 4. nodes.updateContent / playbooks.get take an id only; nodes.readLines answers a skill with 404.
-    for call in (
-        lambda: client.update_node_content(f"dify-it-quirk-doc-{stamp}", {"kind": "doc", "body": "x"}, "slug"),
-        lambda: client.get_playbook("skill", scratch_skill["slug"]),
-        lambda: client.read_node_lines(scratch_skill["id"], 1, 5),
-    ):
-        with pytest.raises(Exception, match="404"):
+    def status_of(call) -> int | None:
+        try:
             call()
-    # 5. fileTrees `update` of a path that does not exist silently creates it.
-    response = client.file_change_request(
-        scratch_skill["id"], [{"kind": "update", "path": f"ghost-{stamp}.md", "content": "boo"}], "Quirk check: update a missing path"
-    )
-    assert response["status"] == "merged"
-    assert f"ghost-{stamp}.md" in [f["path"] for f in client.list_files(scratch_skill["id"])]
-    # 6. playbooks.search: a misspelled `query` key is ignored and the call browses everything.
-    browse = client.search_playbooks({"query": "zzz-no-such-playbook"})
-    assert browse["items"], "an unknown key fell back to browse mode"
+        except BusabaseError as exc:
+            return exc.status_code
+        return None
+
+    # 1. nodes.list with a parentId slug: old → [], fixed → the folder's children.
+    by_slug = [n["id"] for n in client.list_nodes(parent_id=f"dify-it-quirks-{stamp}", depth=1)]
+    assert by_slug in ([], [doc_id])
+    observed["nodes.list parentId slug"] = "old" if by_slug == [] else "fixed"
+    assert [n["id"] for n in client.list_nodes(parent_id=folder_id, depth=1)] == [doc_id]
+    # 2. nodes.list with `types` + parentId: old ignores parentId, fixed filters inside it.
+    inside = [n["id"] for n in client.list_nodes(parent_id=folder_id, types=["skill"])]
+    observed["nodes.list types+parentId"] = "old" if scratch_skill["id"] in inside else "fixed"
+    # 3. docs.create on a slug taken in the same folder: old returns the existing doc unchanged, fixed → 409.
+    try:
+        again = client.create_doc(slug=f"dify-it-quirk-doc-{stamp}", name="Other", body="new", parent_node_id=folder_id)
+        assert again.get("materialized") is True and again["node"]["id"] == doc_id and again["body"] == "original"
+        observed["docs.create slug clash"] = "old"
+    except BusabaseError as exc:
+        assert exc.status_code == 409
+        observed["docs.create slug clash"] = "fixed"
+    # 4. id-only params and readLines on a skill: old → 404; fixed → resolves the slug / a clear 400.
+    content = status_of(lambda: client.update_node_content(f"dify-it-quirk-doc-{stamp}", {"kind": "doc", "body": "x"}, "slug"))
+    playbook = status_of(lambda: client.get_playbook("skill", scratch_skill["slug"]))
+    lines = status_of(lambda: client.read_node_lines(scratch_skill["id"], 1, 5))
+    assert content in (404, None) and playbook in (404, None) and lines in (404, 400)
+    observed["slug for updateContent/playbooks.get"] = "old" if 404 in (content, playbook) else "fixed"
+    observed["readLines on a skill"] = "old" if lines == 404 else "fixed"
+    # 5. fileTrees `update` of a missing path: old silently creates it, fixed → 404.
+    ghost = f"ghost-{stamp}.md"
+    try:
+        response = client.file_change_request(
+            scratch_skill["id"], [{"kind": "update", "path": ghost, "content": "boo"}], "Quirk check: update a missing path"
+        )
+        assert response["status"] == "merged"
+        assert ghost in [f["path"] for f in client.list_files(scratch_skill["id"])]
+        observed["file update of a missing path"] = "old"
+    except BusabaseError as exc:
+        assert exc.status_code == 404
+        assert ghost not in [f["path"] for f in client.list_files(scratch_skill["id"])]
+        observed["file update of a missing path"] = "fixed"
+    # 6. playbooks.search with a misspelled `query` key: old browses everything, fixed → 400.
+    try:
+        browse = client.search_playbooks({"query": "zzz-no-such-playbook"})
+        assert browse["items"], "an unknown key fell back to browse mode"
+        observed["playbooks.search unknown key"] = "old"
+    except BusabaseError as exc:
+        assert exc.status_code == 400
+        observed["playbooks.search unknown key"] = "fixed"
+    print("server quirk behaviour:", json.dumps(observed, ensure_ascii=False))

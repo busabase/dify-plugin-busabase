@@ -1,0 +1,175 @@
+{
+  "$comment": "Every Busabase REST endpoint this plugin calls, with the request keys it sends and the response keys it reads. Busabase checks every key here against its API contract in CI, so a contract change that would break this plugin is caught before release. Dotted paths; `[]` steps into an array. tests/test_contract_usage.py keeps this list in step with busabase_dify/client.py.",
+  "plugin": "dify-plugin-busabase",
+  "endpoints": [
+    {
+      "id": "bases.list",
+      "method": "GET",
+      "path": "/bases",
+      "input": ["status"],
+      "output": ["[].id", "[].slug", "[].name"]
+    },
+    {
+      "id": "bases.get",
+      "method": "GET",
+      "path": "/bases/{baseId}",
+      "input": ["baseId"],
+      "output": ["id", "slug", "name", "fields[].slug", "fields[].name", "fields[].type"]
+    },
+    {
+      "id": "records.list",
+      "method": "GET",
+      "path": "/records",
+      "input": ["baseId", "limit", "cursor", "status"],
+      "output": ["records[].id", "records[].headCommit", "nextCursor"]
+    },
+    {
+      "id": "records.search",
+      "method": "GET",
+      "path": "/records/search",
+      "input": ["baseId", "fieldSlug", "valueText", "limit"],
+      "output": ["[].id"]
+    },
+    {
+      "id": "records.get",
+      "method": "GET",
+      "path": "/records/get",
+      "input": ["recordId", "baseId", "fieldSlug", "valueText"],
+      "output": ["id", "headCommit"]
+    },
+    {
+      "id": "bases.createChangeRequest",
+      "method": "POST",
+      "path": "/bases/{baseId}/change-requests",
+      "input": ["baseId", "fields", "message", "idempotencyKey"],
+      "output": []
+    },
+    {
+      "id": "records.changeRequest",
+      "method": "POST",
+      "path": "/records/{recordId}/change-requests",
+      "input": ["recordId", "operation", "fields", "message"],
+      "output": []
+    },
+    {
+      "id": "records.listChangeRequests",
+      "method": "GET",
+      "path": "/records/{recordId}/change-requests",
+      "input": ["recordId"],
+      "output": ["[].id", "[].operations"]
+    },
+    {
+      "id": "grep",
+      "method": "POST",
+      "path": "/grep",
+      "input": ["pattern", "flags", "sources", "maxMatches", "scope.records.baseIds"],
+      "output": []
+    },
+    {
+      "id": "nodes.list",
+      "method": "GET",
+      "path": "/nodes",
+      "input": ["parentId", "depth", "types"],
+      "output": []
+    },
+    {
+      "id": "nodes.searchByName",
+      "method": "GET",
+      "path": "/nodes/search",
+      "input": ["query", "limit"],
+      "output": []
+    },
+    {
+      "id": "nodes.get",
+      "method": "GET",
+      "path": "/nodes/{nodeId}",
+      "input": ["nodeId", "type"],
+      "output": []
+    },
+    {
+      "id": "nodes.readLines",
+      "method": "GET",
+      "path": "/nodes/{nodeId}/lines",
+      "input": ["nodeId", "startLine", "endLine"],
+      "output": []
+    },
+    {
+      "id": "docs.create",
+      "method": "POST",
+      "path": "/docs",
+      "input": ["slug", "name", "body", "description", "parentNodeId"],
+      "output": []
+    },
+    {
+      "id": "nodes.createChangeRequest",
+      "method": "POST",
+      "path": "/nodes/change-requests",
+      "input": [
+        "message",
+        "operations[].kind",
+        "operations[].nodeType",
+        "operations[].slug",
+        "operations[].name",
+        "operations[].description",
+        "operations[].parentNodeId"
+      ],
+      "output": []
+    },
+    {
+      "id": "nodes.updateContent",
+      "method": "PUT",
+      "path": "/nodes/{nodeId}/content",
+      "input": ["nodeId", "content.kind", "content.body", "message"],
+      "output": []
+    },
+    {
+      "id": "changeRequests.list",
+      "method": "GET",
+      "path": "/change-requests",
+      "input": ["affectsNodeId", "limit"],
+      "output": []
+    },
+    {
+      "id": "fileTrees.listFiles",
+      "method": "GET",
+      "path": "/file-trees/{nodeId}/files",
+      "input": ["nodeId"],
+      "output": []
+    },
+    {
+      "id": "fileTrees.readFile",
+      "method": "GET",
+      "path": "/file-trees/{nodeId}/files/{+filePath}",
+      "input": ["nodeId", "filePath"],
+      "output": []
+    },
+    {
+      "id": "fileTrees.createChangeRequest",
+      "method": "POST",
+      "path": "/file-trees/{nodeId}/change-requests",
+      "input": [
+        "nodeId",
+        "message",
+        "operations[].kind",
+        "operations[].path",
+        "operations[].content",
+        "operations[].baseContentHash"
+      ],
+      "output": []
+    },
+    {
+      "id": "playbooks.search",
+      "method": "POST",
+      "path": "/playbooks/search",
+      "input": ["queries", "kinds", "limit"],
+      "output": []
+    },
+    {
+      "id": "playbooks.get",
+      "method": "GET",
+      "path": "/playbooks/{kind}/{nodeId}",
+      "input": ["kind", "nodeId", "key", "locale"],
+      "output": []
+    }
+  ]
+}
