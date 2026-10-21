@@ -1,6 +1,6 @@
 [project]
 name = "dify-plugin-busabase"
-version = "0.1.0"
+version = "0.1.1"
 description = "Busabase tool plugin for Dify — Bases, records, docs, skills, files and playbooks; every write is a reviewed Change Request."
 readme = "README.md"
 license = "MIT"

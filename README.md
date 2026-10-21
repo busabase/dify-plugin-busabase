@@ -2,7 +2,7 @@
 
 A [Dify](https://dify.ai) tool plugin for [Busabase](https://busabase.com), the open-source database & workspace for AI agents. A Busabase workspace is a tree of **nodes**: folders, Bases (tables), docs, skills (your company's written procedures), drives and AirApps with their files, and more. This plugin lets any Dify workflow, chatflow or Agent read all of it, follow the company's own **playbooks**, and write back as **reviewed, versioned changes**. Every write is a Change Request with a commit message. It merges right away when your API key has write access, and waits in the review inbox for a human when it does not.
 
-**Author:** busabase · **Version:** 0.1.0 · **Type:** tool · **Source:** [github.com/busabase/dify-plugin-busabase](https://github.com/busabase/dify-plugin-busabase)
+**Author:** busabase · **Version:** 0.1.1 · **Type:** tool · **Source:** [github.com/busabase/dify-plugin-busabase](https://github.com/busabase/dify-plugin-busabase)
 
 ## Tools
 

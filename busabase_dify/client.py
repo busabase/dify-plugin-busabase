@@ -14,7 +14,7 @@ from urllib.parse import quote
 
 import httpx
 
-PLUGIN_VERSION = "0.1.0"
+PLUGIN_VERSION = "0.1.1"
 DEFAULT_BASE_URL = "https://busabase.com"
 DEFAULT_TIMEOUT = 30.0
 

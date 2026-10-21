@@ -1,4 +1,4 @@
-version: 0.1.0
+version: 0.1.1
 type: plugin
 author: busabase
 name: busabase
@@ -6,8 +6,8 @@ label:
   en_US: Busabase
   zh_Hans: Busabase
 description:
-  en_US: The open-source database & workspace for AI agents. Read and write Bases, docs, skills and files, follow your company's playbooks, and land workflow and agent output in Busabase as reviewed, versioned changes.
-  zh_Hans: 为 AI 智能体打造的开源数据库与工作区。读写数据表、文档、技能和文件，按公司的工作手册办事，并把工作流和智能体的产出写回 Busabase，成为经过审核、带版本历史的变更。
+  en_US: "Use Busabase in Dify: the open-source database & workspace for AI agents. Read and write records, docs and files, with every change versioned."
+  zh_Hans: 在 Dify 中使用 Busabase：为 AI 智能体打造的开源数据库与工作区。读写记录、文档和文件，每次修改都有版本历史。
 icon: icon.svg
 icon_dark: icon-dark.svg
 resource:

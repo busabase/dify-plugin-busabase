@@ -43,7 +43,7 @@ Copy `.env.example` to `.env` and fill in the remote-debug URL and key from Dify
 ## Package and publish
 
 ```bash
-dify plugin package . -o busabase-0.1.0.difypkg     # dify = langgenius/dify-plugin-daemon CLI
+dify plugin package . -o busabase-0.1.1.difypkg     # dify = langgenius/dify-plugin-daemon CLI
 ```
 
 To publish on the Marketplace, open a PR to [langgenius/dify-plugins](https://github.com/langgenius/dify-plugins) that adds exactly one file, `busabase/busabase/busabase-<version>.difypkg` (CI rejects any other file). Fill in the repo's PR template in English: CI checks the five "Plugin information" fields, exactly one "Submission type" and one "Risk level" box, non-empty "What changed", "Security and privacy notes" and "Local validation", and no CJK anywhere in the body. Run their validator first: `python3 validator/validate-difypkg.py busabase-<version>.difypkg --pr-body-file body.md` from [langgenius/dify-marketplace-toolkit](https://github.com/langgenius/dify-marketplace-toolkit). The README must stay English-only outside code blocks and must link the public source repo; `manifest.yaml` must keep `repo`, `contact` and `privacy`. Before you open it, bump `version` in `manifest.yaml`, in `pyproject.toml`, and `PLUGIN_VERSION` in `busabase_dify/client.py`. Keep `requirements.txt` and `pyproject.toml` dependencies identical; a test checks this.

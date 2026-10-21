@@ -5,8 +5,8 @@ identity:
     en_US: Busabase
     zh_Hans: Busabase
   description:
-    en_US: Work with a Busabase workspace from Dify — Base records, docs, folders, skills, drives and their files, and the company's playbooks. Every write is a reviewed, versioned Change Request.
-    zh_Hans: 在 Dify 中使用 Busabase 工作区：数据表记录、文档、文件夹、技能、云盘及其中的文件，以及公司的工作手册。每次写入都是经过审核、带版本历史的变更请求。
+    en_US: "Work with a Busabase workspace from Dify — Base records, docs, folders, skills, drives and their files, and the company's playbooks. Every write is a versioned Change Request: it applies right away when your API key has write access, and goes to review when it does not."
+    zh_Hans: 在 Dify 中使用 Busabase 工作区：数据表记录、文档、文件夹、技能、云盘及其中的文件，以及公司的工作手册。每次写入都是带版本历史的变更请求：API Key 有写权限就直接生效，没有就进入审核。
   icon: icon.svg
   icon_dark: icon-dark.svg
   tags:
